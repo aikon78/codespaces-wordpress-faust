@@ -1,0 +1,29 @@
+# WordPress files
+/wordpress/wp-content/uploads/
+/wordpress/wp-content/cache/
+/wordpress/wp-content/backup-*
+/wordpress/wp-config.php
+
+# Avoid accidental upload of db.php
+/wordpress/wp-content/db.php
+
+# wp-cli.local.yml uncommitted in separate locations
+/wordpress/wp-cli.local.yml
+
+# node_modules files
+**/node_modules/
+
+# macOS files
+.DS_Store
+.DS_Store?
+._*
+._.?
+.Spotlight-V100
+.Trashes
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

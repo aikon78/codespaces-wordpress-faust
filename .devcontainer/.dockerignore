@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.next
+.env.local
+.env.local.sample
+dist
+build
+.DS_Store
+*.log
+.vscode
+.idea
+wordpress/wp-content/uploads
+wordpress/wp-content/cache
+wordpress/wp-content/backup-*
