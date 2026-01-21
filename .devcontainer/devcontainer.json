@@ -1,0 +1,49 @@
+{
+  "name": "Faust.js + WordPress Development",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "nodeGypDependencies": true,
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "GraphQL.vscode-graphql",
+        "GraphQL.vscode-graphql-syntax",
+        "dsznajder.es7-react-js-snippets",
+        "christian-kohler.npm-intellisense",
+        "eg2.vscode-npm-script"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      }
+    }
+  },
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Faust.js Dev Server",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "npm install",
+
+  "remoteUser": "node"
+}
