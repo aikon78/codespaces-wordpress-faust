@@ -6,6 +6,28 @@ This repository contains a starter kit to get you up and running quickly on [WP 
 
 To get started on WP Engine's Platform please follow the docs here [https://developers.wpengine.com/docs/atlas/getting-started/create-app/](https://developers.wpengine.com/docs/atlas/getting-started/create-app/)
 
+### Quick Start with GitHub Codespaces ☁️
+
+Get started instantly with a fully configured development environment in the cloud:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/aikon78/codespaces-wordpress-faust)
+
+**Using Codespaces:**
+1. Click the badge above or the "Code" button on the repository
+2. Select "Codespaces" tab and create a new codespace
+3. Wait for the container to initialize (dependencies will be installed automatically)
+4. Copy `.env.local.sample` to `.env.local` and configure your WordPress URL
+5. Run `npm run dev` to start the development server
+6. Access your app via the forwarded port (port 3000)
+
+The Codespaces environment includes:
+- ✅ Node.js LTS pre-installed
+- ✅ All VS Code extensions for React, Next.js, and GraphQL
+- ✅ Automatic dependency installation
+- ✅ Pre-configured port forwarding
+
+See [.devcontainer/README.md](.devcontainer/README.md) for more details.
+
 ## Project Structure
 
 ```bash
