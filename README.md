@@ -2,6 +2,32 @@
 
 This repository contains a starter kit to get you up and running quickly on [WP Engine's Headless Platform](https://wpengine.com/headless-wordpress/) with a WordPress site skeleton for more advanced developers.
 
+## 🚀 Quick Start (GitHub Codespaces)
+
+This project is pre-configured for GitHub Codespaces with automatic setup!
+
+### First Time Setup
+
+1. **Open in Codespaces** - The environment will auto-configure
+2. **Complete WordPress installation**:
+   - Open the **PORTS** tab in VS Code
+   - Click on `WordPress (3001)` → "Open in Browser"
+   - Follow the WordPress installation wizard
+3. **Install required plugins**: WPGraphQL and FaustWP
+4. **Copy the Faust Secret Key** from WordPress Settings → Faust
+5. **Update `.env.local`** with your secret key
+6. **Start Next.js**: `npm run dev`
+
+👉 **Detailed instructions**: [SETUP-GUIDE.md](SETUP-GUIDE.md)
+
+### Accessing Your Apps
+
+Use the **PORTS** tab in VS Code to open:
+- **WordPress**: Port 3001
+- **Next.js**: Port 3000
+
+URLs are dynamically generated for each Codespace session!
+
 ## Getting Started 🚀
 
 To get started on WP Engine's Platform please follow the docs here [https://developers.wpengine.com/docs/atlas/getting-started/create-app/](https://developers.wpengine.com/docs/atlas/getting-started/create-app/)

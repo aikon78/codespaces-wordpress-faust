@@ -1,136 +1,77 @@
-# Dev Container Configuration
+# Setup Semplificato WordPress + Faust.js
 
-## Componenti Automatizzati
-
-### Dockerfile
-
-Configura l'immagine Docker con:
-
-- Node.js 18 TypeScript base
-- PHP 7.4 e Apache 2.4
-- MariaDB 10.5
-- WP-CLI per la gestione di WordPress
-
-### devcontainer.json
-
-Configurazione del container di sviluppo con:
-
-- Build automatico del Dockerfile
-- Forwarding porte: 3000 (Next.js), 3001 (WordPress), 80 (Apache)
-- Script di inizializzazione automatici
-- Estensioni VS Code consigliate
-
-### init-wordpress.sh
-
-Script eseguito al primo avvio (`postCreateCommand`) che:
-
-1. Avvia MariaDB
-2. Crea database e utente WordPress
-3. Scarica e installa WordPress
-4. Installa e attiva plugin FaustWP e WP-GraphQL
-5. Configura URL di WordPress (supporta Codespaces)
-
-### start-services.sh
-
-Script eseguito ad ogni avvio (`postStartCommand`) che:
-
-1. Avvia i servizi MariaDB e Apache
-2. Aggiorna URL di WordPress se in Codespace
-
-## Processo di Build
-
-### Fase 1: Build (Dockerfile)
+## Architettura
 
 ```
-1. Base image: mcr.microsoft.com/devcontainers/typescript-node:18-bullseye
-2. Installa: PHP, Apache, MariaDB, WP-CLI
-3. Abilita: moduli Apache (rewrite, php7.4)
-4. Copia: script di inizializzazione
+┌─────────────────────────────────────┐
+│ Container: app (Node.js 20)         │
+│ - Next.js/Faust dev                 │
+│ - Porta 3000                        │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│ Container: wordpress                │
+│ - WordPress ufficiale               │
+│ - Porta 3001 (HTTP 80)              │
+└─────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│ Container: db (MariaDB)             │
+│ - Database persistente              │
+└─────────────────────────────────────┘
 ```
 
-### Fase 2: Post-Create
+## Volumi Persistenti
 
-```
-1. npm install (installa dipendenze Node.js)
-2. init-wordpress.sh (installa WordPress e plugin)
-```
+- `db_data`: Database MariaDB (tutto persiste automaticamente)
+- `wp_data`: Tutti i file WordPress (core, plugin, temi, uploads)
 
-### Fase 3: Post-Start (Ogni avvio)
+## URL Automatici
 
-```
-1. start-services.sh (avvia servizi)
-2. Aggiornamento URL Codespace (se applicabile)
-```
+- **Codespace**: `https://{CODESPACE}-3001.app.github.dev`
+- **Locale**: `http://localhost:3001`
 
-## Variabili di Ambiente Rilevate
+Lo script `update-wordpress-url.sh` aggiorna automaticamente il DB ad ogni avvio.
 
-Il container rileva automaticamente:
+## Prima Installazione
 
-- `CODESPACE_NAME` - Nome del Codespace (per URL dinamico)
-- `GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN` - Dominio di port forwarding
+1. Rebuild del Codespace
+2. Apri `https://{CODESPACE}-3001.app.github.dev`
+3. Completa wizard WordPress (5 minuti)
+4. Installa plugin FaustWP e WP-GraphQL
+5. Copia FAUST_SECRET_KEY in `.env.local`
 
-Se rilevate, WordPress si autoreferenzia correttamente all'URL HTTPS generato automaticamente.
+## Credenziali Default
 
-## Personalizzazione
+Durante il wizard WordPress imposta:
+- **Username**: a tua scelta
+- **Password**: a tua scelta
+- **Email**: a tua scelta
 
-Per modificare il comportamento:
+Database (già configurato):
+- **Nome**: wordpress
+- **Utente**: wordpress  
+- **Password**: wordpress
+- **Host**: db
 
-1. **Cambiar versione PHP:**
-   - Modificare `libapache2-mod-php` in Dockerfile
-
-2. **Aggiungere plugin WordPress:**
-   - Aggiungere righe in `init-wordpress.sh`:
-
-   ```bash
-   sudo -u www-data wp plugin install plugin-name --activate --allow-root
-   ```
-
-3. **Cambiar credenziali default:**
-   - Modificare in `init-wordpress.sh`:
-
-   ```bash
-   DB_NAME="wordpress"
-   DB_USER="wp_user"
-   DB_PASS="wordpress"
-   ```
-
-4. **Aggiungere estensioni VS Code:**
-   - Modificare `devcontainer.json` nella sezione `customizations.vscode.extensions`
-
-## Troubleshooting
-
-### WordPress non è raggiungibile
+## Comandi Utili
 
 ```bash
-# Verificare Apache
-sudo service apache2 status
-sudo service apache2 restart
+# Avvia dev server Next.js
+npm run dev
 
-# Verificare MariaDB
-sudo service mariadb status
+# Accedi al container WordPress
+docker exec -it $(docker ps -qf "name=wordpress") bash
 
-# Controllare log
-tail -f /var/log/apache2/wordpress-error.log
-tail -f /var/log/apache2/wordpress-access.log
+# WP-CLI nel container WordPress
+docker exec -it $(docker ps -qf "name=wordpress") wp --info --allow-root
+
+# Aggiorna manualmente URL
+bash .devcontainer/update-wordpress-url.sh
 ```
 
-### WP-CLI non è trovato
+## File Rimossi
 
-```bash
-which wp
-# Dovrebbe essere: /usr/local/bin/wp
-```
-
-### Permessi file WordPress
-
-```bash
-sudo chown -R www-data:www-data /var/www/wordpress
-sudo chmod -R 755 /var/www/wordpress
-```
-
-## Note Importanti
-
-- I dati del database e i file WordPress persistono tra gli avvii del container
-- Le credenziali default sono solo per sviluppo locale
-- In Codespace, l'URL viene automaticamente aggiornato al dominio HTTPS assegnato
-- I plugin FaustWP e WP-GraphQL sono installati e attivi di default
+I seguenti file del vecchio setup sono ora obsoleti:
+- `Dockerfile` (sostituito da docker-compose)
+- `init-wordpress.sh` (WordPress si auto-installa)
+- `start-services.sh` (Docker gestisce i servizi)
+- `verify-wordpress.sh` (non più necessario)

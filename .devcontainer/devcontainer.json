@@ -1,58 +1,31 @@
 {
-  "name": "WordPress Faust (Next.js)",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:18-bullseye",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
-  },
-  "forwardPorts": [3000, 3001, 80],
+  "name": "WordPress + Faust.js",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [3000, 8080],
   "portsAttributes": {
     "3000": {
-      "label": "Next.js Dev Server",
-      "onAutoForward": "notify"
+      "label": "Next.js (Faust)",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
     },
-    "3001": {
-      "label": "WordPress (Apache)",
-      "onAutoForward": "notify"
-    },
-    "80": {
-      "label": "Apache HTTP",
-      "onAutoForward": "silent"
+    "8080": {
+      "label": "WordPress",
+      "onAutoForward": "notify",
+      "visibility": "private"
     }
   },
-  "postCreateCommand": "npm install && /usr/local/bin/init-wordpress.sh",
-  "postStartCommand": "/usr/local/bin/start-services.sh",
-  "remoteUser": "node",
+  "postCreateCommand": "npm install",
+  "postStartCommand": "bash .devcontainer/update-wp-url.sh",
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "GraphQL.vscode-graphql",
-        "wpspec.wordpress-docs",
-        "ms-vscode.js-debug",
-        "bmewburn.vscode-intelephense-client",
-        "felixbecker.php-debug"
-      ],
-      "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "[javascript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[typescript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[php]": {
-          "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
-        },
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": true
-        }
-      }
+        "wpspec.wordpress-docs"
+      ]
     }
   }
 }

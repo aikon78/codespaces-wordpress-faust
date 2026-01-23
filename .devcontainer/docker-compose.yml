@@ -1,0 +1,72 @@
+version: '3.9'
+
+networks:
+  backend-net:
+    driver: bridge
+  proxy-net:
+    driver: bridge
+
+services:
+  # Database interno - non esposto
+  database-internale:
+    image: mariadb:latest
+    networks:
+      - backend-net
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # WordPress
+  wordpress:
+    image: wordpress:latest
+    networks:
+      - backend-net
+      - proxy-net
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: database-internale
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wp_db
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_HOME', 'http' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '') . '://' . $_SERVER['HTTP_HOST']);
+        define('WP_SITEURL', 'http' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '') . '://' . $_SERVER['HTTP_HOST']);
+        define('WP_MEMORY_LIMIT', '256M');
+        if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false) {
+            $_SERVER['HTTPS'] = 'on';
+        }
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      database-internale:
+        condition: service_healthy
+
+  # Container dev - Node.js per Faust
+  app:
+    image: node:20
+    networks:
+      - proxy-net
+    ports:
+      - "3000:3000"
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity
+    depends_on:
+      - wordpress
+
+volumes:
+  db_data:
+  wp_data:
